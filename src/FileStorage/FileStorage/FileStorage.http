@@ -1,0 +1,8 @@
+@FileStorage_HostAddress = https://localhost:7127
+
+GET {{FileStorage_HostAddress}}/api/files/get-id-by-hash/
+Content-Type: application/json
+
+"qwerty"
+
+###

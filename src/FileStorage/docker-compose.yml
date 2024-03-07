@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+    postgres:
+        container_name: pg_files
+        image: postgres:16-alpine
+        environment:
+            POSTGRES_DB: "files"
+            POSTGRES_USER: "admin"
+            POSTGRES_PASSWORD: "P@$$w0rd"
+        ports:
+            - "55433:5432"
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U admin -d files"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+            start_period: 10s
+        restart: unless-stopped
+        deploy:
+            resources:
+                limits:
+                    cpus: '1'
+                    memory: 512M
+        networks:
+            - files_network
+
+networks:
+    files_network:
+        driver: bridge
