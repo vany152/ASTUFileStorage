@@ -1,134 +1,131 @@
-﻿openapi: 3.0.3
-info:
-  title: API. Файлы
-  description: API управления файлами
-  version: 0.0.1
-servers:
-  - url: '/api'
-tags:
-  - name: Files
-    description: API управления файлами
-paths:
-  # todo add download & upload endpoints
-  /files/get-id-by-hash:
-    get:
-      tags: [ Files ]
-      operationId: getFileIdByHash
-      summary: Получить идентификатор файла по хэшу
-      requestBody:
-        content:
-          application/json:
-            schema:
-              description: Хэш файла
-              title: fileHash
-              type: string
-      responses:
-        200:
-          description: Ok
-          content:
-            application/json:
-              schema:
-                title: id
-                type: string
-                format: uuid
-                nullable: true
-        401:
-          description: Unauthorized
-        404:
-          description: Not found
-  
-  /files/exists:
-    get:
-      tags: [ Files ]
-      operationId: checkFileExist
-      summary: Проверить существование файла
-      requestBody:
-        content:
-          application/json:
-            schema:
-              description: Хэш файла, наличие которого проверяется в базе данных
-              title: fileHash
-              type: string
-      responses:
-        200:
-          description: Ok
-          content:
-            application/json:
-              schema:
-                title: checkFileExistResponse
-                type: object
-                properties:
-                  exists:
-                    type: boolean
-                  id:
-                    type: string
-                    format: uuid
-                    nullable: true
-        401:
-          description: Unauthorized
-
-  /files/increase-links:
-    post:
-      tags: [ Files ]
-      operationId: increaseFileLinks
-      summary: Увеличить количество ссылок на файл
-      requestBody: 
-        content: 
-          application/json:
-            schema:
-              $ref: '#/components/schemas/fileIdentifierDto'
-      responses: 
-        200:
-          description: Ok
-        400:
-          # Некорректный формат идентификатора
-          description: Bad Request
-        401: 
-          description: Unauthorized
-        404:
-          description: Not Found
-
-  /files/decrease-links:
-    post:
-      tags: [ Files ]
-      operationId: decreaseFileLinks
-      summary: Уменьшить количество ссылок на файл
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/fileIdentifierDto'
-      responses:
-        200:
-          description: Ok
-        400:
-          # Некорректный формат идентификатора
-          description: Bad Request
-        401:
-          description: Unauthorized
-        404:
-          description: Not Found 
-
-components:
-  schemas:
-    fileIdentifierDto:
-      description: Идентификатор файла
-      type: string
-      format: uuid
-
-#    fileSummaryDto:
-#      type: object
-#      properties:
-#        id:
-#          description: Идентификатор файла
-#          type: string
-#          format: uuid
-#        name:
-#          description: Название файла
-#          type: string
-#        type:
-#          description: Тип файла
-#          type: string
-#          enum:
-#            - mediafile # Медиафайл отображается в объявлении сразу
-#            - file # Обычный файл загружается вручную
+﻿{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "API. Файлы",
+    "description": "API управления файлами",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/files/{id}/download": {
+      "get": {
+        "tags": [
+          "FileStorage"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/files/upload-single": {
+      "post": {
+        "tags": [
+          "FileStorage"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "file"
+                ],
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "file": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/files/upload-multiple": {
+      "post": {
+        "tags": [
+          "FileStorage"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "files"
+                ],
+                "type": "object",
+                "properties": {
+                  "files": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "binary"
+                    }
+                  }
+                }
+              },
+              "encoding": {
+                "files": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/files/decrease-links-count": {
+      "post": {
+        "tags": [
+          "FileStorage"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    }
+  },
+  "components": { }
+}

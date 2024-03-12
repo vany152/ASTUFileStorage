@@ -24,9 +24,7 @@ create table files
     id uuid primary key,
     
     hash text unique,
-    path text unique,
-    
-    uploader_id uuid not null,
+    absolute_path text unique,
     
     name text,
     
@@ -35,8 +33,8 @@ create table files
     constraint non_empty_hash
         check (string_not_empty(hash)),
     
-    constraint non_empty_path
-        check (string_not_empty(path)),
+    constraint non_empty_absolute_path
+        check (string_not_empty(absolute_path)),
     
     constraint non_empty_name
         check (string_not_empty(name)),

@@ -12,6 +12,12 @@ Intellij-based IDE's files
 # dev database #
 ###################
 src/FileStorage/infrastructure/pgdata
+
+###################
+# dev filestorage #
+###################
+src/FileStorage/infrastructure/file-storage
+
 ###################
 # compiled source #
 ###################

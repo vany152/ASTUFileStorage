@@ -4,12 +4,12 @@
         <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="Dapper" Version="2.1.35" />
-        <PackageReference Include="Dapper.Rainbow" Version="2.0.78" />
         <PackageReference Include="Dapper.Rainbow.PostgreSql" Version="0.7.1" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.2"/>
         <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.0" />
@@ -29,11 +29,6 @@
       <Content Include="..\initdb\1101_create_public_schema.sql">
         <Link>initdb\1101_create_public_schema.sql</Link>
       </Content>
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Data\" />
-      <Folder Include="Models\" />
     </ItemGroup>
 
 </Project>
