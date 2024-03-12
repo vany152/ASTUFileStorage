@@ -24,9 +24,7 @@ builder.Services.AddAntiforgery();
 
 builder.Services.AddHealthChecks();
 
-var connectionString = builder.Configuration.GetConnectionString("FileStorageDatabase") ??
-                       throw new ApplicationException(
-                           "Строка подключения к базе данных отсутствует в файле конфигурации");
+var connectionString = GetConnectionString();
 builder.Services.AddScoped<IDbConnection, NpgsqlConnection>(_ => new NpgsqlConnection(connectionString));
 builder.Services.AddScoped<FileSqlRepository>();
 builder.Services.AddScoped<FileService>();
@@ -124,12 +122,49 @@ app.Run();
 return;
 
 
+string GetConnectionString()
+{
+    if (builder.Environment.IsProduction())
+        return ConstructConnectionStringFromEnvironment();
+
+    return builder.Configuration.GetConnectionString("FileStorageDatabase") ??
+           throw new ApplicationException("Строка подключения к базе данных отсутствует в файле конфигурации");
+}
+
+string ConstructConnectionStringFromEnvironment()
+{
+    var vars = Environment.GetEnvironmentVariables();
+    var host = Environment.GetEnvironmentVariable("DATABASE_HOST") ??
+               throw new ApplicationException($"Переменная окружения DATABASE_HOST отсутствует");
+    var port = Environment.GetEnvironmentVariable("DATABASE_PORT") ??
+               throw new ApplicationException($"Переменная окружения DATABASE_PORT отсутствует");
+    var database = Environment.GetEnvironmentVariable("DATABASE_NAME") ??
+                   throw new ApplicationException($"Переменная окружения DATABASE_NAME отсутствует");
+    var username = Environment.GetEnvironmentVariable("DATABASE_USERNAME") ??
+                   throw new ApplicationException($"Переменная окружения DATABASE_USERNAME отсутствует");
+    var password = Environment.GetEnvironmentVariable("DATABASE_PASSWORD") ??
+                   throw new ApplicationException($"Переменная окружения DATABASE_PASSWORD отсутствует");
+
+    var connectionString_ =
+        $"Host = {host}; Port = {port}; Database = {database}; Username = {username}; Password = {password};";
+    return connectionString_;
+}
+
 void AddApplicationConfig()
 {
-    var storagePath = builder.Configuration.GetValue<string>("AbsoluteStoragePath") ??
-                      throw new ApplicationException(
-                          "Путь директории файлового хранилища отсутствует в файле конфигурации");
+    var storagePath = GetStoragePath();
     if (!Directory.Exists(storagePath))
-        throw new ApplicationException("Директория файлового хранилища не существует");
+        Directory.CreateDirectory(storagePath);
     builder.Services.AddSingleton<ApplicationConfig>(_ => new ApplicationConfig(storagePath));
+}
+
+string GetStoragePath()
+{
+    if (builder.Environment.IsProduction())
+        return Environment.GetEnvironmentVariable("STORAGE_DIRECTORY_PATH") ??
+               throw new ApplicationException($"Переменная окружения STORAGE_DIRECTORY_PATH отсутствует");
+    
+    return builder.Configuration.GetValue<string>("AbsoluteStoragePath") ??
+           throw new ApplicationException(
+               "Путь директории файлового хранилища отсутствует в файле конфигурации");
 }

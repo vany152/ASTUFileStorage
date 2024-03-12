@@ -1,17 +1,53 @@
 version: "3.9"
 
 services:
+    file-storage:
+        container_name: ${FILE_STORAGE_CONTAINER_NAME}
+        image: astu-file-storage:latest
+        build:
+            context: .
+            dockerfile: ./FileStorage/Dockerfile
+        ports:
+            - ${FILE_STORAGE_EXPOSING_HTTP_PORT}:${FILE_STORAGE_INTERNAL_HTTP_PORT}
+            - ${FILE_STORAGE_EXPOSING_HTTPS_PORT}:${FILE_STORAGE_INTERNAL_HTTPS_PORT}
+        volumes:
+            - ${FILE_STORAGE_EXPOSING_DIRECTORY_PATH}:${FILE_STORAGE_INTERNAL_DIRECTORY_PATH}
+        environment:
+            STORAGE_DIRECTORY_PATH: ${FILE_STORAGE_INTERNAL_DIRECTORY_PATH}
+            DATABASE_HOST: ${DATABASE_CONTAINER_NAME}
+            DATABASE_PORT: ${DATABASE_INTERNAL_PORT}
+            DATABASE_NAME: ${DATABASE_NAME}
+            DATABASE_USERNAME: ${DATABASE_USER}
+            DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+            ASPNETCORE_Kestrel__Certificates__Default__Password: ${CERTIFICATE_PASSWORD}
+            ASPNETCORE_Kestrel__Certificates__Default__Path: ${INTERNAL_CERTIFICATE_PATH}
+            ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
+            ASPNETCORE_URLS: ${ASPNETCORE_URLS}
+            ASPNETCORE_HTTPS_PORT: ${FILE_STORAGE_EXPOSING_HTTPS_PORT}
+        healthcheck:
+            test: ["CMD-SHELL", "curl --fail http://localhost:${FILE_STORAGE_INTERNAL_HTTP_PORT}/ping || exit 1"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+            start_period: 10s
+        networks:
+            - file_storage_network
+
     postgres:
-        container_name: pg_files
+        container_name: ${DATABASE_CONTAINER_NAME}
         image: postgres:16-alpine
         environment:
-            POSTGRES_DB: "files"
-            POSTGRES_USER: "admin"
-            POSTGRES_PASSWORD: "P@$$w0rd"
+            POSTGRES_DB: ${DATABASE_NAME}
+            POSTGRES_USER: ${DATABASE_USER}
+            POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+            PGDATA: ${DATABASE_DATA_INTERNAL_PATH}/pgdata
         ports:
-            - "55433:5432"
+            - ${DATABASE_EXPOSING_PORT}:${DATABASE_INTERNAL_PORT}
+        volumes:
+            - ${DATABASE_INITIAL_SCRIPTS_PATH}:/docker-entrypoint-initdb.d
+            - ${DATABASE_DATA_EXPOSING_PATH}:${DATABASE_DATA_INTERNAL_PATH}
         healthcheck:
-            test: ["CMD-SHELL", "pg_isready -U admin -d files"]
+            test: ["CMD-SHELL", "pg_isready -U admin -d ${DATABASE_NAME}"]
             interval: 10s
             timeout: 5s
             retries: 5
@@ -23,8 +59,8 @@ services:
                     cpus: '1'
                     memory: 512M
         networks:
-            - files_network
+            - file_storage_network
 
 networks:
-    files_network:
+    file_storage_network:
         driver: bridge
