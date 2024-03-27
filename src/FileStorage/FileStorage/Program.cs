@@ -133,7 +133,6 @@ string GetConnectionString()
 
 string ConstructConnectionStringFromEnvironment()
 {
-    var vars = Environment.GetEnvironmentVariables();
     var host = Environment.GetEnvironmentVariable("DATABASE_HOST") ??
                throw new ApplicationException($"Переменная окружения DATABASE_HOST отсутствует");
     var port = Environment.GetEnvironmentVariable("DATABASE_PORT") ??
