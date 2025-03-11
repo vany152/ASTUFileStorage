@@ -3,7 +3,7 @@ version: "3.9"
 services:
     file-storage:
         container_name: ${FILE_STORAGE_CONTAINER_NAME}
-        image: astu-file-storage:latest
+        image: file-storage:latest
         build:
             context: .
             dockerfile: ./FileStorage/Dockerfile
@@ -35,7 +35,7 @@ services:
 
     postgres:
         container_name: ${DATABASE_CONTAINER_NAME}
-        image: postgres:16-alpine
+        image: postgres:17-alpine
         environment:
             POSTGRES_DB: ${DATABASE_NAME}
             POSTGRES_USER: ${DATABASE_USER}
