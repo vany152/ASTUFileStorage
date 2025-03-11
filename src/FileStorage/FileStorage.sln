@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileStorage", "FileStorage\FileStorage.csproj", "{AF983ED9-67D8-4C56-A147-1BF97EC46C62}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "docker-compose", "docker-compose.dcproj", "{4A7B20BD-FDD0-471B-BDF0-FD5CA8952E40}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AF983ED9-67D8-4C56-A147-1BF97EC46C62}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF983ED9-67D8-4C56-A147-1BF97EC46C62}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF983ED9-67D8-4C56-A147-1BF97EC46C62}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF983ED9-67D8-4C56-A147-1BF97EC46C62}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A7B20BD-FDD0-471B-BDF0-FD5CA8952E40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A7B20BD-FDD0-471B-BDF0-FD5CA8952E40}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A7B20BD-FDD0-471B-BDF0-FD5CA8952E40}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A7B20BD-FDD0-471B-BDF0-FD5CA8952E40}.Release|Any CPU.Build.0 = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(RiderSharedRunConfigurations) = postSolution
+		File = api-specifications\openapi-generator-config\ping-api.yaml.run.xml
+		File = api-specifications\openapi-generator-config\files-api.yaml.run.xml
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+	EndGlobalSection
+EndGlobal
