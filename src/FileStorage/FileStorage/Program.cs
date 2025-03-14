@@ -33,13 +33,12 @@ AddApplicationConfig();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
-app.UseHttpsRedirection();
+
+if (GetUseHttpsRedirectionEnabled())
+    app.UseHttpsRedirection();
 
 app.UseAntiforgery();
 
@@ -144,9 +143,9 @@ string ConstructConnectionStringFromEnvironment()
     var password = Environment.GetEnvironmentVariable("DATABASE_PASSWORD") ??
                    throw new ApplicationException($"Переменная окружения DATABASE_PASSWORD отсутствует");
 
-    var connectionString_ =
+    var connectionStringLocal =
         $"Host = {host}; Port = {port}; Database = {database}; Username = {username}; Password = {password};";
-    return connectionString_;
+    return connectionStringLocal;
 }
 
 void AddApplicationConfig()
@@ -166,4 +165,18 @@ string GetStoragePath()
     return builder.Configuration.GetValue<string>("AbsoluteStoragePath") ??
            throw new ApplicationException(
                "Путь директории файлового хранилища отсутствует в файле конфигурации");
+}
+
+bool GetUseHttpsRedirectionEnabled()
+{
+    string variable;
+    if (builder.Environment.IsProduction())
+        variable = Environment.GetEnvironmentVariable("USE_HTTPS_REDIRECTION") ??
+                   throw new ApplicationException("Переменная окружения USE_HTTPS отсутствует");
+    else
+        variable = builder.Configuration.GetValue<string>("UseHttpsRedirection") ??
+                   throw new ApplicationException(
+                       "Путь директории файлового хранилища отсутствует в файле конфигурации");
+
+    return bool.Parse(variable);
 }
