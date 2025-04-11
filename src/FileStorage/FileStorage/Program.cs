@@ -7,11 +7,14 @@ using Microsoft.AspNetCore.Mvc;
 using Npgsql;
 using Serilog;
 
-Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console()
-    .CreateLogger();
-
 var builder = WebApplication.CreateBuilder(args);
+
+Log.Logger = new LoggerConfiguration()
+    .Enrich.FromLogContext()
+    .ReadFrom.Configuration(builder.Configuration)
+    .CreateBootstrapLogger();
+builder.Logging.AddSerilog();
+builder.Host.UseSerilog();
 
 // todo add authentication & authorization
 // todo разобраться с DisableAntiforgery()
@@ -41,6 +44,7 @@ if (GetUseHttpsRedirectionEnabled())
     app.UseHttpsRedirection();
 
 app.UseAntiforgery();
+app.UseSerilogRequestLogging();
 
 
 //////////////////////////////////////// config endpoints mapping
