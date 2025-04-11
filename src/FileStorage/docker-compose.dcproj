@@ -14,6 +14,5 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include=".env" />
-    <Content Include="generate-aspnet-security-sertificates.bat" />
   </ItemGroup>
 </Project>
